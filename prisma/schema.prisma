@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  ACCOUNTANT
+  USER
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
+
+model Organization {
+  id           String        @id @default(uuid())
+  name         String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  users        User[]
+  transactions Transaction[]
+}
+
+model User {
+  id             String         @id @default(uuid())
+  email          String         @unique
+  passwordHash   String
+  firstName      String?
+  lastName       String?
+  role           Role           @default(USER)
+  orgId          String
+  organization   Organization   @relation(fields: [orgId], references: [id])
+  refreshTokens  RefreshToken[]
+  transactions   Transaction[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  @@index([orgId])
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model Transaction {
+  id          String          @id @default(uuid())
+  orgId       String
+  userId      String
+  type        TransactionType
+  amount      Decimal         @db.Decimal(10, 2)
+  category    String
+  description String?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  user         User         @relation(fields: [userId], references: [id])
+
+  @@index([orgId])
+  @@index([createdAt])
+  @@index([orgId, createdAt])
+}
