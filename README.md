@@ -87,7 +87,7 @@ The seed script (`npx prisma db seed`) automatically generates the following acc
 ---
 
 ## Deployment Links
-*(Update these links once the app is deployed)*
+
 
 - **Frontend:** [https://multi-tenant-expense-management-sys.vercel.app/login](https://multi-tenant-expense-management-sys.vercel.app/login)
 - **Backend API:** [https://multi-tenant-expense-management-system.onrender.com/](https://multi-tenant-expense-management-system.onrender.com/)
